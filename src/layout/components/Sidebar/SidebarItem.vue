@@ -19,7 +19,7 @@
           <span
             v-if="theOnlyOneChild.meta.title"
             slot="title"
-          >{{ $t('route.' + theOnlyOneChild.meta.title) }}</span>
+          >{{ theOnlyOneChild.meta.title }}</span>
         </el-menu-item>
       </sidebar-item-link>
     </template>
@@ -36,7 +36,7 @@
         <span
           v-if="item.meta && item.meta.title"
           slot="title"
-        >{{ $t('route.' + item.meta.title) }}</span>
+        >{{ item.meta.title }}</span>
       </template>
       <template v-if="item.children">
         <sidebar-item

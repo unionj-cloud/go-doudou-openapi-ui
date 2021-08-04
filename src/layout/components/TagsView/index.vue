@@ -18,7 +18,7 @@
         @click.middle.native="!isAffix(tag)?closeSelectedTag(tag):''"
         @contextmenu.prevent.native="openMenu(tag, $event)"
       >
-        {{ $t('route.' + tag.meta.title) }}
+        {{ tag.meta.title }}
         <span
           v-if="!isAffix(tag)"
           class="el-icon-close"
@@ -26,28 +26,6 @@
         />
       </router-link>
     </scroll-pane>
-    <ul
-      v-show="visible"
-      :style="{left: left+'px', top: top+'px'}"
-      class="contextmenu"
-    >
-      <li @click="refreshSelectedTag(selectedTag)">
-        {{ $t('tagsView.refresh') }}
-      </li>
-      <li
-        v-if="!isAffix(selectedTag)"
-        @click="closeSelectedTag(selectedTag)"
-      >
-        {{
-          $t('tagsView.close') }}
-      </li>
-      <li @click="closeOthersTags">
-        {{ $t('tagsView.closeOthers') }}
-      </li>
-      <li @click="closeAllTags(selectedTag)">
-        {{ $t('tagsView.closeAll') }}
-      </li>
-    </ul>
   </div>
 </template>
 

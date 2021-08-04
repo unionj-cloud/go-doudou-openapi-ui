@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <aside>
-      {{ $t('guide.description') }}
       <a
         href="https://github.com/kamranahmedse/driver.js"
         target="_blank"
@@ -12,7 +11,6 @@
       type="primary"
       @click.prevent.stop="guide"
     >
-      {{ $t('guide.button') }}
     </el-button>
   </div>
 </template>

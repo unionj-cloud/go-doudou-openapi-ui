@@ -13,7 +13,6 @@
       icon="el-icon-document"
       @click="handleDownload"
     >
-      {{ $t('excel.selectedExport') }}
     </el-button>
     <a
       href="https://armour.github.io/vue-typescript-admin-docs/features/components/excel.html"

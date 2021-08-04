@@ -75,7 +75,6 @@
       style="margin-top:60px;"
     >
       <aside>
-        {{ $t('permission.tips') }}
         <br> e.g.
       </aside>
 

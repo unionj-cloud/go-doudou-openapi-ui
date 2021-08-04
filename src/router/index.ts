@@ -36,18 +36,16 @@ Vue.use(VueRouter)
 */
 export const constantRoutes: RouteConfig[] = [
   {
-    path: '/',
+    path: '/tab',
     component: Layout,
-    redirect: '/dashboard',
     children: [
       {
-        path: 'dashboard',
-        component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
-        name: 'Dashboard',
+        path: 'index',
+        component: () => import(/* webpackChunkName: "tab" */ '@/views/tab/index.vue'),
+        name: 'Tab',
         meta: {
-          title: 'dashboard',
-          icon: 'dashboard',
-          affix: true
+          title: 'tab',
+          icon: 'tab'
         }
       }
     ]
@@ -60,17 +58,108 @@ export const constantRoutes: RouteConfig[] = [
 */
 export const asyncRoutes: RouteConfig[] = [
   {
-    path: '/tab',
+    path: '/pet',
     component: Layout,
+    redirect: '/pet/index',
+    name: 'Pet',
+    meta: {
+      title: 'pet',
+      icon: 'nested'
+    },
     children: [
       {
         path: 'index',
-        component: () => import(/* webpackChunkName: "tab" */ '@/views/tab/index.vue'),
-        name: 'Tab',
+        component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+        name: 'Index',
         meta: {
-          title: 'tab',
-          icon: 'tab'
+          title: 'index'
         }
+      },
+      {
+        path: '%2Fpet%2F%7Bid%7D',
+        component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+        name: 'Jack',
+        meta: {
+          title: 'jack'
+        },
+        redirect: '/%2Fpet%2F%7Bid%7D/get',
+        children: [
+          {
+            path: 'get',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Jack:Get',
+            meta: {
+              title: 'get'
+            }
+          },
+          {
+            path: 'post',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Jack:Post',
+            meta: {
+              title: 'post'
+            }
+          },
+          {
+            path: 'put',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Jack:Put',
+            meta: {
+              title: 'put'
+            }
+          },
+          {
+            path: 'delete',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Jack:Delete',
+            meta: {
+              title: 'delete'
+            }
+          }
+        ]
+      },
+      {
+        path: '%2Fpet%2Fpage',
+        component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+        name: 'Rose',
+        meta: {
+          title: 'rose'
+        },
+        redirect: '/%2Fpet%2Fpage/get',
+        children: [
+          {
+            path: 'get',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Rose:Get',
+            meta: {
+              title: 'get'
+            }
+          },
+          {
+            path: 'post',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Rose:Post',
+            meta: {
+              title: 'post'
+            }
+          },
+          {
+            path: 'put',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Rose:Put',
+            meta: {
+              title: 'put'
+            }
+          },
+          {
+            path: 'delete',
+            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            name: 'Rose:Delete',
+            meta: {
+              title: 'delete'
+            }
+          }
+        ]
       }
     ]
   },

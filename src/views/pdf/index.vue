@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <aside style="margin-top:15px;">
-      {{ $t('pdf.tips') }}
     </aside>
     <router-link
       target="_blank"

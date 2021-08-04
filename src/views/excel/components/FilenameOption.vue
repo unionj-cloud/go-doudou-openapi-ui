@@ -6,7 +6,6 @@
     >Filename: </label>
     <el-input
       v-model="filename"
-      :placeholder="$t('excel.placeholder')"
       style="width:345px;"
       prefix-icon="el-icon-document"
     />

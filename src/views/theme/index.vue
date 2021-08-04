@@ -1,24 +1,5 @@
 <template>
   <div class="app-container">
-    <el-card class="box-card">
-      <div slot="header">
-        <a
-          class="link-type link-title"
-          target="_blank"
-          href="https://armour.github.io/vue-typescript-admin-docs/guide/advanced/theme.html"
-        >
-          {{ $t('theme.documentation') }}
-        </a>
-      </div>
-      <div class="box-item">
-        <span class="field-label">{{ $t('theme.change') }} : </span>
-        <el-switch v-model="theme" />
-        <aside style="margin-top:15px;">
-          {{ $t('theme.tips') }}
-        </aside>
-      </div>
-    </el-card>
-
     <div class="block">
       <el-button type="primary">
         Primary

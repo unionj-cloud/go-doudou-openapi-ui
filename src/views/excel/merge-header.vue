@@ -7,7 +7,6 @@
       icon="el-icon-document"
       @click="handleDownload"
     >
-      {{ $t('excel.export') }}
     </el-button>
 
     <el-table
