@@ -36,7 +36,7 @@ Vue.use(VueRouter)
 */
 export const constantRoutes: RouteConfig[] = [
   {
-    path: '/tab',
+    path: '/',
     component: Layout,
     children: [
       {
