@@ -4,6 +4,9 @@ import VueRouter, { RouteConfig } from 'vue-router'
 /* Layout */
 import Layout from '@/layout/index.vue'
 
+import Tab from '@/views/tab/index.vue'
+import Doc from '@/views/doc/index.vue'
+
 Vue.use(VueRouter)
 
 /*
@@ -41,7 +44,7 @@ export const constantRoutes: RouteConfig[] = [
     children: [
       {
         path: 'index',
-        component: () => import(/* webpackChunkName: "tab" */ '@/views/tab/index.vue'),
+        component: Tab,
         name: 'Tab',
         meta: {
           title: 'tab',
@@ -69,7 +72,7 @@ export const asyncRoutes: RouteConfig[] = [
     children: [
       {
         path: 'index',
-        component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+        component: Doc,
         name: 'Index',
         meta: {
           title: 'index'
@@ -77,7 +80,7 @@ export const asyncRoutes: RouteConfig[] = [
       },
       {
         path: '%2Fpet%2F%7Bid%7D',
-        component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+        component: Doc,
         name: 'Jack',
         meta: {
           title: 'jack'
@@ -86,7 +89,7 @@ export const asyncRoutes: RouteConfig[] = [
         children: [
           {
             path: 'get',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Jack:Get',
             meta: {
               title: 'get'
@@ -94,7 +97,7 @@ export const asyncRoutes: RouteConfig[] = [
           },
           {
             path: 'post',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Jack:Post',
             meta: {
               title: 'post'
@@ -102,7 +105,7 @@ export const asyncRoutes: RouteConfig[] = [
           },
           {
             path: 'put',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Jack:Put',
             meta: {
               title: 'put'
@@ -110,7 +113,7 @@ export const asyncRoutes: RouteConfig[] = [
           },
           {
             path: 'delete',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Jack:Delete',
             meta: {
               title: 'delete'
@@ -120,7 +123,7 @@ export const asyncRoutes: RouteConfig[] = [
       },
       {
         path: '%2Fpet%2Fpage',
-        component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+        component: Doc,
         name: 'Rose',
         meta: {
           title: 'rose'
@@ -129,7 +132,7 @@ export const asyncRoutes: RouteConfig[] = [
         children: [
           {
             path: 'get',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Rose:Get',
             meta: {
               title: 'get'
@@ -137,7 +140,7 @@ export const asyncRoutes: RouteConfig[] = [
           },
           {
             path: 'post',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Rose:Post',
             meta: {
               title: 'post'
@@ -145,7 +148,7 @@ export const asyncRoutes: RouteConfig[] = [
           },
           {
             path: 'put',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Rose:Put',
             meta: {
               title: 'put'
@@ -153,7 +156,7 @@ export const asyncRoutes: RouteConfig[] = [
           },
           {
             path: 'delete',
-            component: () => import(/* webpackChunkName: "tab" */ '@/views/doc/index.vue'),
+            component: Doc,
             name: 'Rose:Delete',
             meta: {
               title: 'delete'

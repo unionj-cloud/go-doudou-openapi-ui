@@ -14,7 +14,6 @@ import router from '@/router'
 import '@/icons/components'
 import '@/permission'
 import '@/utils/error-log'
-import '@/pwa/register-service-worker'
 import * as directives from '@/directives'
 import * as filters from '@/filters'
 
