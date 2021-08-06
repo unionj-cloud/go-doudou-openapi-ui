@@ -12,10 +12,11 @@ const getPageTitle = (key: string) => {
 }
 
 PermissionModule.GenerateRoutes([])
-// Dynamically add accessible routes
-PermissionModule.dynamicRoutes.forEach(route => {
-  router.addRoute(route)
-})
+  .then(() => {
+    PermissionModule.dynamicRoutes.forEach(route => {
+      router.addRoute(route)
+    })
+  })
 
 router.beforeEach(async(to: Route, _: Route, next: any) => {
   // Start progress bar
