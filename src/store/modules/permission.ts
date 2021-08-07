@@ -2,8 +2,7 @@ import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-dec
 import { RouteConfig } from 'vue-router'
 import { paths2Route, constantRoutes } from '@/router'
 import store from '@/store'
-import { OpenAPIV3 } from 'openapi-types'
-import axios, { AxiosResponse } from 'axios'
+import { DocModule } from '@/store/modules/doc'
 
 const hasPermission = (roles: string[], route: RouteConfig) => {
   if (route.meta && route.meta.roles) {
@@ -45,19 +44,7 @@ class Permission extends VuexModule implements IPermissionState {
 
   @Action
   public GenerateRoutes(roles: string[]) {
-    return axios.get('https://petstore3.swagger.io/api/v3/openapi.json', {
-      // auth: {
-      //   username: '',
-      //   password: ''
-      // }
-    })
-      .then((resp:AxiosResponse<OpenAPIV3.Document>) => {
-        return resp.data
-      })
-      .then(resp => {
-        console.log(resp)
-        this.SET_ROUTES(paths2Route(resp.paths))
-      })
+    this.SET_ROUTES(paths2Route(DocModule.document.paths))
   }
 }
 

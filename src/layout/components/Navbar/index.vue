@@ -13,9 +13,6 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <header-search class="right-menu-item" />
-        <error-log class="errLog-container right-menu-item hover-effect" />
-        <screenfull class="right-menu-item hover-effect" />
-        <lang-select class="right-menu-item hover-effect" />
       </template>
     </div>
   </div>
@@ -24,25 +21,16 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { AppModule } from '@/store/modules/app'
-import { UserModule } from '@/store/modules/user'
 import Breadcrumb from '@/components/Breadcrumb/index.vue'
-import ErrorLog from '@/components/ErrorLog/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
 import HeaderSearch from '@/components/HeaderSearch/index.vue'
-import LangSelect from '@/components/LangSelect/index.vue'
-import Screenfull from '@/components/Screenfull/index.vue'
-import SizeSelect from '@/components/SizeSelect/index.vue'
 
 @Component({
   name: 'Navbar',
   components: {
     Breadcrumb,
-    ErrorLog,
     Hamburger,
-    HeaderSearch,
-    LangSelect,
-    Screenfull,
-    SizeSelect
+    HeaderSearch
   }
 })
 export default class extends Vue {
@@ -54,19 +42,8 @@ export default class extends Vue {
     return AppModule.device.toString()
   }
 
-  get avatar() {
-    return UserModule.avatar
-  }
-
   private toggleSideBar() {
     AppModule.ToggleSideBar(false)
-  }
-
-  private async logout() {
-    await UserModule.LogOut()
-    this.$router.push(`/login?redirect=${this.$route.fullPath}`).catch(err => {
-      console.warn(err)
-    })
   }
 }
 </script>

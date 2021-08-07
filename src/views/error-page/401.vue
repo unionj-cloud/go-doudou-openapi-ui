@@ -21,7 +21,7 @@
         <ul class="list-unstyled">
           <li>或者你可以去:</li>
           <li class="link-type">
-            <router-link to="/dashboard">
+            <router-link to="/">
               回首页
             </router-link>
           </li>
@@ -72,7 +72,7 @@ export default class extends Vue {
 
   private back() {
     if (this.$route.query.noGoBack) {
-      this.$router.push({ path: '/dashboard' }).catch(err => {
+      this.$router.push({ path: '/' }).catch(err => {
         console.warn(err)
       })
     } else {

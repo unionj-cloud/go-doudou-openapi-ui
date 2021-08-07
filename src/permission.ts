@@ -3,6 +3,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { Route } from 'vue-router'
 import { PermissionModule } from '@/store/modules/permission'
+import { DocModule } from '@/store/modules/doc'
 import settings from './settings'
 
 NProgress.configure({ showSpinner: false })
@@ -11,7 +12,10 @@ const getPageTitle = (key: string) => {
   return `${settings.title}`
 }
 
-PermissionModule.GenerateRoutes([])
+DocModule.GetDocument()
+  .then(() => {
+    return PermissionModule.GenerateRoutes([])
+  })
   .then(() => {
     PermissionModule.dynamicRoutes.forEach(route => {
       router.addRoute(route)

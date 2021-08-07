@@ -35,7 +35,6 @@ import path from 'path'
 import Fuse from 'fuse.js' // A lightweight fuzzy-search module
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { RouteConfig } from 'vue-router'
-import { AppModule } from '@/store/modules/app'
 import { PermissionModule } from '@/store/modules/permission'
 
 @Component({
@@ -50,10 +49,6 @@ export default class extends Vue {
 
   get routes() {
     return PermissionModule.routes
-  }
-
-  get lang() {
-    return AppModule.language
   }
 
   @Watch('lang')

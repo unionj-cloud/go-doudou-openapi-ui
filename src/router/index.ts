@@ -6,9 +6,8 @@ import _ from 'lodash'
 /* Layout */
 import Layout from '@/layout/index.vue'
 
-import Tab from '@/views/tab/index.vue'
-import DocIndex from '@/views/doc/index.vue'
-import DocDetail from '@/views/doc/detail.vue'
+import Home from '@/views/home/index.vue'
+import Doc from '@/views/doc/index.vue'
 
 Vue.use(VueRouter)
 
@@ -44,14 +43,16 @@ export const constantRoutes: RouteConfig[] = [
   {
     path: '/',
     component: Layout,
+    redirect: '/index',
     children: [
       {
         path: 'index',
-        component: Tab,
-        name: 'Tab',
+        component: Home,
+        name: 'Home',
         meta: {
-          title: 'tab',
-          icon: 'tab'
+          title: 'Home',
+          icon: 'home',
+          affix: true
         }
       }
     ]
@@ -68,85 +69,99 @@ function endpoint2ModuleName(endpoint: string) :string {
 
 export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
   const routes: RouteConfig[] = []
-  Object.keys(paths).forEach(endpoint => {
+  Object.keys(paths).sort().forEach(endpoint => {
     const pathItem = paths[endpoint]
-    const firstPart = endpoint2ModuleName(endpoint)
-    let moduleName = _.capitalize(firstPart)
-    let method = ''
-    let summary
     if (pathItem?.get) {
-      method = 'get'
-      summary = pathItem.get.summary
+      const method = 'get'
+      const summary = pathItem.get.summary
+      let tag = ''
       if (pathItem.get.tags?.length) {
-        moduleName = pathItem.get.tags[0]
+        tag = pathItem.get.tags[0]
       }
+      routes.push({
+        path: `${encodeURIComponent(endpoint)}/${method}`,
+        name: `${endpoint2Key(endpoint)}:${method}`,
+        component: Doc,
+        meta: {
+          title: summary || `${method.toUpperCase()} ${endpoint}`,
+          tag,
+          endpoint
+        }
+      })
     }
     if (pathItem?.post) {
-      method = 'post'
-      summary = pathItem.post.summary
+      const method = 'post'
+      const summary = pathItem.post.summary
+      let tag = ''
       if (pathItem.post.tags?.length) {
-        moduleName = pathItem.post.tags[0]
+        tag = pathItem.post.tags[0]
       }
+      routes.push({
+        path: `${encodeURIComponent(endpoint)}/${method}`,
+        name: `${endpoint2Key(endpoint)}:${method}`,
+        component: Doc,
+        meta: {
+          title: summary || `${method.toUpperCase()} ${endpoint}`,
+          tag,
+          endpoint
+        }
+      })
     }
     if (pathItem?.put) {
-      method = 'put'
-      summary = pathItem.put.summary
+      const method = 'put'
+      const summary = pathItem.put.summary
+      let tag = ''
       if (pathItem.put.tags?.length) {
-        moduleName = pathItem.put.tags[0]
+        tag = pathItem.put.tags[0]
       }
+      routes.push({
+        path: `${encodeURIComponent(endpoint)}/${method}`,
+        name: `${endpoint2Key(endpoint)}:${method}`,
+        component: Doc,
+        meta: {
+          title: summary || `${method.toUpperCase()} ${endpoint}`,
+          tag,
+          endpoint
+        }
+      })
     }
     if (pathItem?.delete) {
-      method = 'delete'
-      summary = pathItem.delete.summary
+      const method = 'delete'
+      const summary = pathItem.delete.summary
+      let tag = ''
       if (pathItem.delete.tags?.length) {
-        moduleName = pathItem.delete.tags[0]
+        tag = pathItem.delete.tags[0]
       }
+      routes.push({
+        path: `${encodeURIComponent(endpoint)}/${method}`,
+        name: `${endpoint2Key(endpoint)}:${method}`,
+        component: Doc,
+        meta: {
+          title: summary || `${method.toUpperCase()} ${endpoint}`,
+          tag,
+          endpoint
+        }
+      })
     }
-    const route: RouteConfig = {
+  })
+  const groupBy = _.groupBy(routes, 'meta.tag')
+  const result: RouteConfig[] = []
+  Object.keys(groupBy).forEach(key => {
+    const routes = groupBy[key]
+    const { endpoint } = routes[0].meta
+    const firstPart = endpoint2ModuleName(endpoint)
+    const moduleName = _.capitalize(firstPart)
+    const father: RouteConfig = {
       path: `/${firstPart}`,
       component: Layout,
-      redirect: `/${firstPart}/index`,
+      redirect: `/${firstPart}/${routes[0].path}`,
       name: _.capitalize(firstPart),
       meta: {
         title: moduleName,
         icon: 'nested'
       },
-      children: [
-        {
-          path: `${encodeURIComponent(endpoint)}/${method}`,
-          name: `${endpoint2Key(endpoint)}:${method}`,
-          component: DocDetail,
-          meta: {
-            title: summary || `${method.toUpperCase()} ${endpoint}`
-          }
-        }
-      ]
+      children: [...routes]
     }
-    routes.push(route)
-  })
-  const groupBy = _.groupBy(routes, 'meta.title')
-  const result: RouteConfig[] = []
-  Object.keys(groupBy).forEach(key => {
-    const routes = groupBy[key]
-    const father = routes[0]
-    const children = routes.map(route => route.children).reduce((x, y) => x?.concat(y || []), [])
-    let _sortedChildren: RouteConfig[] = [{
-      path: 'index',
-      component: DocIndex,
-      name: `${father.name}:Index`,
-      meta: {
-        title: `${father.meta.title}`
-      }
-    }]
-    let filtered: RouteConfig[] = children?.filter(child => child.name?.split(':')[1] === 'get') || []
-    _sortedChildren = [..._sortedChildren, ...filtered]
-    filtered = children?.filter(child => child.name?.split(':')[1] === 'post') || []
-    _sortedChildren = [..._sortedChildren, ...filtered]
-    filtered = children?.filter(child => child.name?.split(':')[1] === 'put') || []
-    _sortedChildren = [..._sortedChildren, ...filtered]
-    filtered = children?.filter(child => child.name?.split(':')[1] === 'delete') || []
-    _sortedChildren = [..._sortedChildren, ...filtered]
-    father.children = [..._sortedChildren]
     result.push(father)
   })
   return _.sortBy(result, [function(o) { return o.path }])
