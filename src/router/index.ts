@@ -6,6 +6,7 @@ import _ from 'lodash'
 /* Layout */
 import Layout from '@/layout/index.vue'
 
+import Redirect from '@/views/redirect/index.vue'
 import Home from '@/views/home/index.vue'
 import Doc from '@/views/doc/index.vue'
 
@@ -41,6 +42,17 @@ Vue.use(VueRouter)
 */
 export const constantRoutes: RouteConfig[] = [
   {
+    path: '/redirect',
+    component: Layout,
+    meta: { hidden: true },
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: Redirect
+      }
+    ]
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/index',
@@ -50,9 +62,10 @@ export const constantRoutes: RouteConfig[] = [
         component: Home,
         name: 'Home',
         meta: {
-          title: 'Home',
+          title: 'home',
           icon: 'home',
-          affix: true
+          affix: true,
+          i18n: true
         }
       }
     ]
@@ -85,7 +98,8 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
         meta: {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
-          endpoint
+          endpoint,
+          i18n: false
         }
       })
     }
@@ -103,7 +117,8 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
         meta: {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
-          endpoint
+          endpoint,
+          i18n: false
         }
       })
     }
@@ -121,7 +136,8 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
         meta: {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
-          endpoint
+          endpoint,
+          i18n: false
         }
       })
     }
@@ -139,7 +155,8 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
         meta: {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
-          endpoint
+          endpoint,
+          i18n: false
         }
       })
     }
@@ -158,7 +175,8 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
       name: _.capitalize(firstPart),
       meta: {
         title: moduleName,
-        icon: 'nested'
+        icon: 'nested',
+        i18n: false
       },
       children: [...routes]
     }

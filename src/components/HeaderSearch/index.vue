@@ -35,7 +35,9 @@ import path from 'path'
 import Fuse from 'fuse.js' // A lightweight fuzzy-search module
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { RouteConfig } from 'vue-router'
+import { AppModule } from '@/store/modules/app'
 import { PermissionModule } from '@/store/modules/permission'
+import i18n from '@/lang' // Internationalization
 
 @Component({
   name: 'HeaderSearch'
@@ -49,6 +51,10 @@ export default class extends Vue {
 
   get routes() {
     return PermissionModule.routes
+  }
+
+  get lang() {
+    return AppModule.language
   }
 
   @Watch('lang')
@@ -110,13 +116,16 @@ export default class extends Vue {
       location: 0,
       distance: 100,
       minMatchCharLength: 1,
-      keys: [{
-        name: 'title',
-        weight: 0.7
-      }, {
-        name: 'path',
-        weight: 0.3
-      }]
+      keys: [
+        {
+          name: 'meta.title',
+          weight: 0.7
+        },
+        {
+          name: 'meta.endpoint',
+          weight: 0.3
+        }
+      ]
     })
   }
 
@@ -124,23 +133,26 @@ export default class extends Vue {
   // And generate the internationalized title
   private generateRoutes(routes: RouteConfig[], basePath = '/', prefixTitle: string[] = []) {
     let res: RouteConfig[] = []
-
     for (const router of routes) {
       // skip hidden router
       if (router.meta && router.meta.hidden) {
         continue
       }
-
       const data: RouteConfig = {
         path: path.resolve(basePath, router.path),
         meta: {
-          title: [...prefixTitle]
+          title: [...prefixTitle],
+          endpoint: router.meta?.endpoint
         }
       }
 
       if (router.meta && router.meta.title) {
         // generate internationalized title
-        data.meta.title = [...data.meta.title, router.meta.title]
+        let title = router.meta.title
+        if (router.meta.i18n) {
+          title = i18n.t(`route.${title}`).toString()
+        }
+        data.meta.title = [...data.meta.title, title]
         if (router.redirect !== 'noRedirect') {
           // only push the routes with title
           // special case: need to exclude parent router without redirect

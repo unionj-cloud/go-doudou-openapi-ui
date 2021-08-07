@@ -3,22 +3,22 @@
     <el-main class="doc-main">
       <el-card class="doc-card">
         <div slot="header" class="clearfix">
-          <span>Basic Info</span>
+          <span>{{ $t('doc.basicInfo') }}</span>
         </div>
         <div>
           <el-row class="doc-row">
-            <el-col :span="4">Description: </el-col>
+            <el-col :span="4">{{ $t('doc.description') }}: </el-col>
             <el-col :span="20">{{this.pathItem.description}}</el-col>
           </el-row>
           <el-row class="doc-row">
-            <el-col :span="4">Path: </el-col>
-            <el-col :span="20"><el-tag>{{this.method}}</el-tag> {{this.path}}</el-col>
+            <el-col :span="4">{{ $t('doc.path') }}: </el-col>
+            <el-col :span="20"><el-tag>{{this.method.toUpperCase()}}</el-tag> {{this.path}}</el-col>
           </el-row>
         </div>
       </el-card>
       <el-card class="doc-card" v-if="hasParams">
         <div slot="header" class="clearfix">
-          <span>Request Parameters</span>
+          <span>{{ $t('doc.reqParams') }}</span>
         </div>
         <div class="doc-table">
           <el-table
@@ -26,38 +26,38 @@
             style="width: 100%">
             <el-table-column
               prop="name"
-              label="Name">
+              :label="$t('doc.column.name')">
             </el-table-column>
             <el-table-column
               prop="in"
-              label="In">
+              :label="$t('doc.column.in')">
             </el-table-column>
             <el-table-column
               prop="type"
-              label="Type">
+              :label="$t('doc.column.type')">
             </el-table-column>
             <el-table-column
               prop="required"
-              label="Required">
+              :label="$t('doc.column.required')">
             </el-table-column>
             <el-table-column
               prop="default"
-              label="Default">
+              :label="$t('doc.column.default')">
             </el-table-column>
             <el-table-column
               prop="example"
-              label="Example">
+              :label="$t('doc.column.example')">
             </el-table-column>
             <el-table-column
               prop="description"
-              label="Description">
+              :label="$t('doc.column.description')">
             </el-table-column>
           </el-table>
         </div>
       </el-card>
       <el-card class="doc-card" v-if="hasReqBody">
         <div slot="header" class="clearfix">
-          <span>Request Body</span>
+          <span>{{ $t('doc.reqBody') }}</span>
         </div>
         <el-row class="doc-row">
           <el-col :span="4"> Content-Type: </el-col>
@@ -73,34 +73,34 @@
             :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
             <el-table-column
               prop="name"
-              label="Name">
+              :label="$t('doc.column.name')">
             </el-table-column>
             <el-table-column
               prop="type"
-              label="Type">
+              :label="$t('doc.column.type')">
             </el-table-column>
             <el-table-column
               prop="required"
-              label="Required">
+              :label="$t('doc.column.required')">
             </el-table-column>
             <el-table-column
               prop="default"
-              label="Default">
+              :label="$t('doc.column.default')">
             </el-table-column>
             <el-table-column
               prop="example"
-              label="Example">
+              :label="$t('doc.column.example')">
             </el-table-column>
             <el-table-column
               prop="description"
-              label="Description">
+              :label="$t('doc.column.description')">
             </el-table-column>
           </el-table>
         </div>
       </el-card>
       <el-card class="doc-card">
         <div slot="header" class="clearfix">
-          <span>Response Body</span>
+          <span>{{ $t('doc.respBody') }}</span>
         </div>
         <el-tabs v-model="activeTab" type="card">
           <el-tab-pane v-for="(item, index) in respBody" :key="index" :label="item.code" :name="item.code">
@@ -118,27 +118,27 @@
                 :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
                 <el-table-column
                   prop="name"
-                  label="Name">
+                  :label="$t('doc.column.name')">
                 </el-table-column>
                 <el-table-column
                   prop="type"
-                  label="Type">
+                  :label="$t('doc.column.type')">
                 </el-table-column>
                 <el-table-column
                   prop="required"
-                  label="Required">
+                  :label="$t('doc.column.required')">
                 </el-table-column>
                 <el-table-column
                   prop="default"
-                  label="Default">
+                  :label="$t('doc.column.default')">
                 </el-table-column>
                 <el-table-column
                   prop="example"
-                  label="Example">
+                  :label="$t('doc.column.example')">
                 </el-table-column>
                 <el-table-column
                   prop="description"
-                  label="Description">
+                  :label="$t('doc.column.description')">
                 </el-table-column>
               </el-table>
             </div>

@@ -13,6 +13,10 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <header-search class="right-menu-item" />
+        <lang-select class="right-menu-item hover-effect" />
+        <div class="right-menu-item hover-effect">
+          <a target="_blank" href="https://github.com/unionj-cloud/go-doudou"><svg-icon name="github" width="40" height="40" /></a>
+        </div>
       </template>
     </div>
   </div>
@@ -24,13 +28,15 @@ import { AppModule } from '@/store/modules/app'
 import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
 import HeaderSearch from '@/components/HeaderSearch/index.vue'
+import LangSelect from '@/components/LangSelect/index.vue'
 
 @Component({
   name: 'Navbar',
   components: {
     Breadcrumb,
     Hamburger,
-    HeaderSearch
+    HeaderSearch,
+    LangSelect
   }
 })
 export default class extends Vue {
@@ -55,6 +61,10 @@ export default class extends Vue {
   position: relative;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+
+  .svg-icon {
+    vertical-align: middle;
+  }
 
   .hamburger-container {
     line-height: 46px;

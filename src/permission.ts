@@ -5,11 +5,17 @@ import { Route } from 'vue-router'
 import { PermissionModule } from '@/store/modules/permission'
 import { DocModule } from '@/store/modules/doc'
 import settings from './settings'
+import i18n from '@/lang' // Internationalization
 
 NProgress.configure({ showSpinner: false })
 
 const getPageTitle = (key: string) => {
-  return `${settings.title}`
+  const hasKey = i18n.te(`route.${key}`)
+  if (hasKey) {
+    const pageName = i18n.t(`route.${key}`)
+    return `${pageName} - ${settings.title}`
+  }
+  return `${key} - ${settings.title}`
 }
 
 DocModule.GetDocument()

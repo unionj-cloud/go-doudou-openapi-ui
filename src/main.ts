@@ -11,11 +11,13 @@ import App from '@/App.vue'
 import store from '@/store'
 import { AppModule } from '@/store/modules/app'
 import router from '@/router'
+import i18n from '@/lang'
 import '@/icons/components'
 import '@/permission'
 
 Vue.use(ElementUI, {
-  size: AppModule.size // Set element-ui default size
+  size: AppModule.size, // Set element-ui default size
+  i18n: (key: string, value: string) => i18n.t(key, value)
 })
 
 Vue.use(SvgIcon, {
@@ -29,5 +31,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
+  i18n,
   render: (h) => h(App)
 }).$mount('#app')

@@ -11,11 +11,11 @@
         <span
           v-if="item.redirect === 'noredirect' || index === breadcrumbs.length-1"
           class="no-redirect"
-        >{{ item.meta.title }}</span>
+        >{{ item.meta.i18n ? $t('route.' + item.meta.title) : item.meta.title}}</span>
         <a
           v-else
           @click.prevent="handleLink(item)"
-        >{{ item.meta.title }}</a>
+        >{{ item.meta.i18n ? $t('route.' + item.meta.title) : item.meta.title}}</a>
       </el-breadcrumb-item>
     </transition-group>
   </el-breadcrumb>
