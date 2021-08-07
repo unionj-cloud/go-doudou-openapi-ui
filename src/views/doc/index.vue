@@ -20,7 +20,7 @@
         <div slot="header" class="clearfix">
           <span>Request Parameters</span>
         </div>
-        <div>
+        <div class="doc-table">
           <el-table
             :data="params"
             style="width: 100%">
@@ -59,7 +59,11 @@
         <div slot="header" class="clearfix">
           <span>Request Body</span>
         </div>
-        <div>
+        <el-row class="doc-row">
+          <el-col :span="4"> Content-Type: </el-col>
+          <el-col :span="20"> {{this.reqContentTypes.join(', ')}}</el-col>
+        </el-row>
+        <div class="doc-table">
           <el-table
             :data="reqBody"
             style="width: 100%"
@@ -84,6 +88,10 @@
               label="Default">
             </el-table-column>
             <el-table-column
+              prop="example"
+              label="Example">
+            </el-table-column>
+            <el-table-column
               prop="description"
               label="Description">
             </el-table-column>
@@ -94,8 +102,48 @@
         <div slot="header" class="clearfix">
           <span>Response Body</span>
         </div>
-        <div>path: {{path}}</div>
-        <div>method: {{method}}</div>
+        <el-tabs v-model="activeTab" type="card">
+          <el-tab-pane v-for="(item, index) in respBody" :key="index" :label="item.code" :name="item.code">
+            <el-row class="doc-row">
+              <el-col :span="4"> Content-Type: </el-col>
+              <el-col :span="20"> {{item.contentTypes.join(', ')}}</el-col>
+            </el-row>
+            <div class="doc-table">
+              <el-table
+                :data="item.body"
+                style="width: 100%"
+                row-key="id"
+                border
+                default-expand-all
+                :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                <el-table-column
+                  prop="name"
+                  label="Name">
+                </el-table-column>
+                <el-table-column
+                  prop="type"
+                  label="Type">
+                </el-table-column>
+                <el-table-column
+                  prop="required"
+                  label="Required">
+                </el-table-column>
+                <el-table-column
+                  prop="default"
+                  label="Default">
+                </el-table-column>
+                <el-table-column
+                  prop="example"
+                  label="Example">
+                </el-table-column>
+                <el-table-column
+                  prop="description"
+                  label="Description">
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </el-card>
     </el-main>
   </el-container>
@@ -105,6 +153,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { DocModule } from '@/store/modules/doc'
 import { OpenAPIV3 } from 'openapi-types'
+import { v4 as uuidv4 } from 'uuid'
 
 interface DocParam {
   name: string
@@ -117,22 +166,30 @@ interface DocParam {
 }
 
 interface DocBody {
+  id: string
   name: string
   type: string
   required: string
   description: string
   default: string
   children?: DocBody[]
+  example: string
 }
 
-function getTypeByRef(ref: string):string {
+interface DocResp {
+  code: string
+  contentTypes: string[]
+  body: DocBody[]
+}
+
+function getTypeByRef():string {
   return 'object'
 }
 
 function schema2DocType(schema : OpenAPIV3.SchemaObject):string {
   const type = schema.type
   if (!type) {
-    return getTypeByRef((schema as OpenAPIV3.ReferenceObject).$ref)
+    return getTypeByRef()
   }
   let result = ''
   switch (type) {
@@ -147,6 +204,10 @@ function schema2DocType(schema : OpenAPIV3.SchemaObject):string {
     }
     case 'string': {
       result = 'string'
+      const format = schema.format
+      if (format != null && format === 'binary') {
+        result = 'file'
+      }
       break
     }
     case 'array': {
@@ -185,11 +246,13 @@ function schema2Table(schema : OpenAPIV3.SchemaObject):DocBody[] {
         propSchema = DocModule.document.components?.schemas?.[key]
       }
       const row: DocBody = {
+        id: uuidv4(),
         name: key,
         type: schema2DocType(propSchema as OpenAPIV3.SchemaObject),
         required: requiredProps.indexOf(key) >= 0 ? 'true' : 'false',
         description: (propSchema as OpenAPIV3.SchemaObject).description || '',
         default: (propSchema as OpenAPIV3.SchemaObject).default || '',
+        example: (propSchema as OpenAPIV3.SchemaObject).example || '',
         children: schema2Table(propSchema as OpenAPIV3.SchemaObject)
       }
       return row
@@ -199,6 +262,42 @@ function schema2Table(schema : OpenAPIV3.SchemaObject):DocBody[] {
   }
 }
 
+function responseObject2DocResp(resp: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject, code: string):DocResp {
+  const result:DocResp = {
+    code,
+    contentTypes: [],
+    body: []
+  }
+  let ref = (resp as OpenAPIV3.ReferenceObject).$ref
+  if (ref) {
+    const key = ref.substring(ref.lastIndexOf('/') + 1)
+    resp = (DocModule.document.components?.responses?.[key] || {}) as OpenAPIV3.ResponseObject
+  }
+  const content = (resp as OpenAPIV3.ResponseObject).content
+  if (content) {
+    result.contentTypes = Object.keys(content)
+    const media: OpenAPIV3.MediaTypeObject = content[Object.keys(content)[0]] as OpenAPIV3.MediaTypeObject
+    let schema = media.schema
+    ref = (schema as OpenAPIV3.ReferenceObject).$ref
+    if (ref) {
+      const key = ref.substring(ref.lastIndexOf('/') + 1)
+      schema = (DocModule.document.components?.schemas?.[key] || {}) as OpenAPIV3.SchemaObject
+    }
+    result.body = [{
+      id: uuidv4(),
+      name: 'root',
+      type: schema2DocType(schema as OpenAPIV3.SchemaObject),
+      required: 'true',
+      description: (schema as OpenAPIV3.SchemaObject).description || '',
+      default: (schema as OpenAPIV3.SchemaObject).default || '',
+      example: (schema as OpenAPIV3.SchemaObject).example || '',
+      children: schema2Table(schema as OpenAPIV3.SchemaObject)
+    }]
+  }
+  return result
+}
+
+// TODO support response header
 @Component({
   name: 'Doc'
 })
@@ -208,48 +307,63 @@ export default class extends Vue {
   private pathItem: OpenAPIV3.OperationObject = {}
   private params: DocParam[] = []
   private reqBody: DocBody[] = []
+  private respBody: DocResp[] = []
+  private reqContentTypes: string[] = []
+  private activeTab = ''
 
   mounted() {
     this.path = decodeURIComponent(this.$route.path.split('/')[2])
     this.method = this.$route.path.split('/')[3]
     this.pathItem = (DocModule.document.paths[this.path] as any)[this.method]
     const parameters = (this.pathItem.parameters || []) as OpenAPIV3.ParameterObject[]
-    this.params = parameters.map(param => {
-      const type = schema2DocType((param.schema as OpenAPIV3.SchemaObject))
-      const docParam: DocParam = {
-        name: param.name,
-        in: param.in,
-        type,
-        required: (param.required || false) + '',
-        example: param.example || '',
-        description: param.description || '',
-        default: (param.schema as OpenAPIV3.SchemaObject).default || ''
-      }
-      return docParam
-    })
-    let reqBody = this.pathItem.requestBody
-    const ref = (reqBody as OpenAPIV3.ReferenceObject).$ref
-    if (ref) {
-      const key = ref.substring(ref.lastIndexOf('/') + 1)
-      reqBody = DocModule.document.components?.requestBodies?.[key]
+    if (parameters.length) {
+      this.params = parameters.map(param => {
+        const type = schema2DocType((param.schema as OpenAPIV3.SchemaObject))
+        const docParam: DocParam = {
+          name: param.name,
+          in: param.in,
+          type,
+          required: (param.required || false) + '',
+          example: param.example || '',
+          description: param.description || '',
+          default: (param.schema as OpenAPIV3.SchemaObject).default || ''
+        }
+        return docParam
+      })
     }
-    const content = (reqBody as OpenAPIV3.RequestBodyObject).content
-    const media = content['application/json'] as OpenAPIV3.MediaTypeObject
-    if (media) {
-      let schema: OpenAPIV3.SchemaObject = {}
-      const ref = (media.schema as OpenAPIV3.ReferenceObject).$ref
+    let reqBody = this.pathItem.requestBody
+    if (reqBody) {
+      let ref = (reqBody as OpenAPIV3.ReferenceObject).$ref
+      if (ref) {
+        const key = ref.substring(ref.lastIndexOf('/') + 1)
+        reqBody = DocModule.document.components?.requestBodies?.[key]
+      }
+      const content = (reqBody as OpenAPIV3.RequestBodyObject).content
+      this.reqContentTypes = Object.keys(content)
+      const media: OpenAPIV3.MediaTypeObject = content[Object.keys(content)[0]] as OpenAPIV3.MediaTypeObject
+      let schema = media.schema
+      ref = (schema as OpenAPIV3.ReferenceObject).$ref
       if (ref) {
         const key = ref.substring(ref.lastIndexOf('/') + 1)
         schema = (DocModule.document.components?.schemas?.[key] || {}) as OpenAPIV3.SchemaObject
       }
       this.reqBody = [{
+        id: uuidv4(),
         name: 'root',
         type: schema2DocType(schema as OpenAPIV3.SchemaObject),
-        required: (schema.required || false) + '',
+        required: 'true',
         description: (schema as OpenAPIV3.SchemaObject).description || '',
         default: (schema as OpenAPIV3.SchemaObject).default || '',
-        children: schema2Table(schema)
+        example: (schema as OpenAPIV3.SchemaObject).example || '',
+        children: schema2Table(schema as OpenAPIV3.SchemaObject)
       }]
+    }
+    const responses: OpenAPIV3.ResponsesObject | undefined = this.pathItem.responses
+    if (responses) {
+      Object.keys(responses).sort().forEach(code => {
+        this.respBody.push(responseObject2DocResp(responses[code], code))
+      })
+      this.activeTab = this.respBody.length ? this.respBody[0].code : ''
     }
     console.log(this.pathItem)
   }
@@ -274,6 +388,9 @@ export default class extends Vue {
   .doc-row {
     height: 40px;
     line-height: 40px;
+  }
+  .doc-table{
+    margin: 20px 0px;
   }
 }
 </style>
