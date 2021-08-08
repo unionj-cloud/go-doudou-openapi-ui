@@ -33,13 +33,27 @@ class Doc extends VuexModule implements IDocState {
 
   @Action
   public async GetDocument() {
-    const resp:AxiosResponse<OpenAPIV3.Document> = await axios.get('https://petstore3.swagger.io/api/v3/openapi.json', {
-      // auth: {
-      //   username: '',
-      //   password: ''
-      // }
-    })
-    this.SET_DOCUMENT(resp.data)
+    let reqUrl = ''
+    let username = ''
+    let password = ''
+    let parsedUrl = new URL(window.location.href)
+    let docUrl = parsedUrl.searchParams.get('docUrl')
+    if (!docUrl) {
+      docUrl = (window as any).docUrl
+    }
+    if (docUrl) {
+      parsedUrl = new URL(docUrl)
+      reqUrl = parsedUrl.origin + parsedUrl.pathname + parsedUrl.search
+      username = parsedUrl.username
+      password = parsedUrl.password
+      const resp:AxiosResponse<OpenAPIV3.Document> = await axios.get(reqUrl, {
+        auth: {
+          username,
+          password
+        }
+      })
+      this.SET_DOCUMENT(resp.data)
+    }
   }
 }
 
