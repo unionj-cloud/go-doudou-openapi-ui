@@ -70,7 +70,7 @@ export const constantRoutes: RouteConfig[] = [
 ]
 
 const createRouter = () => new VueRouter({
-  mode: 'history', // Disabled due to Github Pages doesn't support this, enable this if you need.
+  // mode: 'history', // Disabled due to Github Pages doesn't support this, enable this if you need.
   scrollBehavior: (to, from, savedPosition) => {
     if (savedPosition) {
       return savedPosition
@@ -78,7 +78,6 @@ const createRouter = () => new VueRouter({
       return { x: 0, y: 0 }
     }
   },
-  base: process.env.BASE_URL,
   routes: constantRoutes
 })
 

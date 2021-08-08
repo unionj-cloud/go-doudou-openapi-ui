@@ -37,10 +37,9 @@ class Doc extends VuexModule implements IDocState {
     let username = ''
     let password = ''
     let parsedUrl = new URL(window.location.href)
-    let docUrl = parsedUrl.searchParams.get('docUrl')
-    if (!docUrl) {
-      docUrl = (window as any).docUrl
-    }
+    const search = parsedUrl.hash.substring(parsedUrl.hash.indexOf('?'))
+    parsedUrl = new URL(`http://localhost${search}`)
+    const docUrl = parsedUrl.searchParams.get('docUrl')
     if (docUrl) {
       parsedUrl = new URL(docUrl)
       reqUrl = parsedUrl.origin + parsedUrl.pathname + parsedUrl.search
@@ -53,6 +52,8 @@ class Doc extends VuexModule implements IDocState {
         }
       })
       this.SET_DOCUMENT(resp.data)
+    } else if ((window as any).doc) {
+      this.SET_DOCUMENT((window as any).doc)
     }
   }
 }
