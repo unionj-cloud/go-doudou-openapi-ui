@@ -9,10 +9,25 @@ export interface IDocState {
 
 @Module({ dynamic: true, store, name: 'doc' })
 class Doc extends VuexModule implements IDocState {
-  public document: OpenAPIV3.Document<{}> = {} as OpenAPIV3.Document<{}>
+  public document: OpenAPIV3.Document<{}> = {
+    openapi: '',
+    info: {
+      title: '',
+      version: ''
+    },
+    servers: [],
+    paths: {},
+    components: {},
+    security: [],
+    tags: [],
+    externalDocs: {
+      url: ''
+    }
+  }
 
   @Mutation
   private SET_DOCUMENT(document: OpenAPIV3.Document) {
+    console.log(document)
     this.document = document
   }
 

@@ -190,5 +190,17 @@ export default {
       example: '示例',
       description: '说明'
     }
+  },
+  home: {
+    version: '版本',
+    description: '说明',
+    total: '接口数量',
+    column: {
+      module: '模块',
+      summary: '接口摘要',
+      path: '接口路径',
+      method: '请求方法',
+      description: '接口说明'
+    }
   }
 }

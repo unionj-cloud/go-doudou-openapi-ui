@@ -12,7 +12,7 @@
           </el-row>
           <el-row class="doc-row">
             <el-col :span="4">{{ $t('doc.path') }}: </el-col>
-            <el-col :span="20"><el-tag>{{this.method.toUpperCase()}}</el-tag> {{this.path}}</el-col>
+            <el-col :span="20"><el-tag :type="tagType(method)">{{this.method.toUpperCase()}}</el-tag> {{this.path}}</el-col>
           </el-row>
         </div>
       </el-card>
@@ -154,6 +154,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { DocModule } from '@/store/modules/doc'
 import { OpenAPIV3 } from 'openapi-types'
 import { v4 as uuidv4 } from 'uuid'
+import { tagType } from '@/utils/doc'
 
 interface DocParam {
   name: string
@@ -302,6 +303,7 @@ function responseObject2DocResp(resp: OpenAPIV3.ReferenceObject | OpenAPIV3.Resp
   name: 'Doc'
 })
 export default class extends Vue {
+  private tagType = tagType
   private path = ''
   private method = ''
   private pathItem: OpenAPIV3.OperationObject = {}

@@ -190,5 +190,17 @@ export default {
       example: 'Example',
       description: 'Description'
     }
+  },
+  home: {
+    version: 'Version',
+    description: 'Description',
+    total: 'Api Total',
+    column: {
+      module: 'Module',
+      summary: 'Summary',
+      path: 'Path',
+      method: 'Method',
+      description: 'Description'
+    }
   }
 }

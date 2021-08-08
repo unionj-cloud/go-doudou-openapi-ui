@@ -1,14 +1,11 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
-import { OpenAPIV3 } from 'openapi-types'
-import _ from 'lodash'
 
 /* Layout */
 import Layout from '@/layout/index.vue'
 
 import Redirect from '@/views/redirect/index.vue'
 import Home from '@/views/home/index.vue'
-import Doc from '@/views/doc/index.vue'
 
 Vue.use(VueRouter)
 
@@ -71,119 +68,6 @@ export const constantRoutes: RouteConfig[] = [
     ]
   }
 ]
-
-function endpoint2Key(endpoint: string) :string {
-  return endpoint.replace(/[{}]/ig, '_').replace(/[^a-zA-Z0-9_]/ig, '')
-}
-
-function endpoint2ModuleName(endpoint: string) :string {
-  return endpoint.split('/')[1]
-}
-
-export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
-  const routes: RouteConfig[] = []
-  Object.keys(paths).sort().forEach(endpoint => {
-    const pathItem = paths[endpoint]
-    if (pathItem?.get) {
-      const method = 'get'
-      const summary = pathItem.get.summary
-      let tag = ''
-      if (pathItem.get.tags?.length) {
-        tag = pathItem.get.tags[0]
-      }
-      routes.push({
-        path: `${encodeURIComponent(endpoint)}/${method}`,
-        name: `${endpoint2Key(endpoint)}:${method}`,
-        component: Doc,
-        meta: {
-          title: summary || `${method.toUpperCase()} ${endpoint}`,
-          tag,
-          endpoint,
-          i18n: false
-        }
-      })
-    }
-    if (pathItem?.post) {
-      const method = 'post'
-      const summary = pathItem.post.summary
-      let tag = ''
-      if (pathItem.post.tags?.length) {
-        tag = pathItem.post.tags[0]
-      }
-      routes.push({
-        path: `${encodeURIComponent(endpoint)}/${method}`,
-        name: `${endpoint2Key(endpoint)}:${method}`,
-        component: Doc,
-        meta: {
-          title: summary || `${method.toUpperCase()} ${endpoint}`,
-          tag,
-          endpoint,
-          i18n: false
-        }
-      })
-    }
-    if (pathItem?.put) {
-      const method = 'put'
-      const summary = pathItem.put.summary
-      let tag = ''
-      if (pathItem.put.tags?.length) {
-        tag = pathItem.put.tags[0]
-      }
-      routes.push({
-        path: `${encodeURIComponent(endpoint)}/${method}`,
-        name: `${endpoint2Key(endpoint)}:${method}`,
-        component: Doc,
-        meta: {
-          title: summary || `${method.toUpperCase()} ${endpoint}`,
-          tag,
-          endpoint,
-          i18n: false
-        }
-      })
-    }
-    if (pathItem?.delete) {
-      const method = 'delete'
-      const summary = pathItem.delete.summary
-      let tag = ''
-      if (pathItem.delete.tags?.length) {
-        tag = pathItem.delete.tags[0]
-      }
-      routes.push({
-        path: `${encodeURIComponent(endpoint)}/${method}`,
-        name: `${endpoint2Key(endpoint)}:${method}`,
-        component: Doc,
-        meta: {
-          title: summary || `${method.toUpperCase()} ${endpoint}`,
-          tag,
-          endpoint,
-          i18n: false
-        }
-      })
-    }
-  })
-  const groupBy = _.groupBy(routes, 'meta.tag')
-  const result: RouteConfig[] = []
-  Object.keys(groupBy).forEach(key => {
-    const routes = groupBy[key]
-    const { endpoint } = routes[0].meta
-    const firstPart = endpoint2ModuleName(endpoint)
-    const moduleName = _.capitalize(firstPart)
-    const father: RouteConfig = {
-      path: `/${firstPart}`,
-      component: Layout,
-      redirect: `/${firstPart}/${routes[0].path}`,
-      name: _.capitalize(firstPart),
-      meta: {
-        title: moduleName,
-        icon: 'nested',
-        i18n: false
-      },
-      children: [...routes]
-    }
-    result.push(father)
-  })
-  return _.sortBy(result, [function(o) { return o.path }])
-}
 
 const createRouter = () => new VueRouter({
   // mode: 'history',  // Disabled due to Github Pages doesn't support this, enable this if you need.

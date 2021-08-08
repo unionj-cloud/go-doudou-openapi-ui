@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import settings from '@/settings'
+import { DocModule } from '@/store/modules/doc'
 
 @Component({
   name: 'SidebarLogo'
@@ -43,7 +43,9 @@ import settings from '@/settings'
 export default class extends Vue {
   @Prop({ required: true }) private collapse!: boolean
 
-  private title = settings.title
+  get title() {
+    return DocModule.document.info.title
+  }
 }
 </script>
 
@@ -60,7 +62,6 @@ export default class extends Vue {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
   line-height: 50px;
   background: #2b2f3a;
   text-align: center;
@@ -78,11 +79,11 @@ export default class extends Vue {
     }
 
     & .sidebar-title {
-      display: inline-block;
+      display: inline;
+      word-wrap: break-word;
       margin: 0;
       color: #fff;
       font-weight: 600;
-      line-height: 50px;
       font-size: 14px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
