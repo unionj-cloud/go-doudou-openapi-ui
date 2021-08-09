@@ -317,7 +317,8 @@ export default class extends Vue {
     this.path = decodeURIComponent(this.$route.path.split('/')[2])
     this.method = this.$route.path.split('/')[3]
     this.pathItem = (DocModule.document.paths[this.path] as any)[this.method]
-    const parameters = (this.pathItem.parameters || []) as OpenAPIV3.ParameterObject[]
+    const commonParams = (DocModule.document.paths[this.path]?.parameters || []) as OpenAPIV3.ParameterObject[]
+    const parameters = ([...commonParams, ...(this.pathItem.parameters || [])]) as OpenAPIV3.ParameterObject[]
     if (parameters.length) {
       this.params = parameters.map(param => {
         const type = schema2DocType((param.schema as OpenAPIV3.SchemaObject))

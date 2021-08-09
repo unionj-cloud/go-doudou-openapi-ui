@@ -195,6 +195,7 @@ export default {
     version: '版本',
     description: '说明',
     total: '接口数量',
+    stat: '接口数量统计',
     column: {
       module: '模块',
       summary: '接口摘要',

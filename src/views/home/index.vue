@@ -2,18 +2,30 @@
   <el-container>
     <el-main class="home-main">
       <div class="home-info">
-          <h2>{{title}}</h2>
-          <el-row class="home-row">
-            <el-col :span="4">{{ $t('home.version') }}: </el-col>
-            <el-col :span="20">{{version}}</el-col>
+          <el-row class="home-title">
+            <h2>{{title}}</h2>
+            <el-link type="primary" target="_blank" :href="docUrl">{{docUrl}}</el-link>
           </el-row>
-          <el-row class="home-row">
-            <el-col :span="4">{{ $t('home.total') }}: </el-col>
-            <el-col :span="20">{{total}}</el-col>
-          </el-row>
-          <el-row class="home-row">
-            <el-col :span="4">{{ $t('home.description') }}: </el-col>
-            <el-col :span="20">{{description}}</el-col>
+          <el-row>
+            <el-col :span="16">
+              <el-row class="home-row">
+                <el-col :span="4">{{ $t('home.version') }}: </el-col>
+                <el-col :span="20">{{version}}</el-col>
+              </el-row>
+              <el-row class="home-row">
+                <el-col :span="4">{{ $t('home.total') }}: </el-col>
+                <el-col :span="20">{{total}}</el-col>
+              </el-row>
+              <el-row class="home-row">
+                <el-col :span="4">{{ $t('home.description') }}: </el-col>
+                <el-col :span="20">{{description}}</el-col>
+              </el-row>
+            </el-col>
+            <el-col :span="8">
+              <div class="chart-wrapper">
+                <pie-chart :legends="pieLegends" :data="pieData"/>
+              </div>
+            </el-col>
           </el-row>
         </div>
         <div class="home-table">
@@ -56,9 +68,14 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { DocModule } from '@/store/modules/doc'
 import { HomeTable, paths2HomeTable, tagType } from '@/utils/doc'
+import PieChart, { Item } from './components/PieChart.vue'
+import _ from 'lodash'
 
 @Component({
-  name: 'Doc'
+  name: 'Doc',
+  components: {
+    PieChart
+  }
 })
 export default class extends Vue {
   private tagType = tagType
@@ -83,6 +100,24 @@ export default class extends Vue {
     return this.table.length
   }
 
+  get pieLegends() {
+    return Object.keys(_.groupBy(this.table, 'module'))
+  }
+
+  get pieData() {
+    const groupByModule = _.groupBy(this.table, 'module')
+    return Object.keys(groupByModule).map((key: string) => {
+      return {
+        value: groupByModule[key].length,
+        name: key
+      } as Item
+    })
+  }
+
+  get docUrl() {
+    return DocModule.docUrl
+  }
+
   handleRowClick(row: HomeTable) {
     console.log(row)
     this.$router.push(row.route)
@@ -90,6 +125,9 @@ export default class extends Vue {
 }
 </script>
 <style lang='scss' scoped>
+.home-title{
+  margin-bottom: 20px;
+}
 .home-main {
   margin: 0 40px 40px 40px;
   padding: 40px;

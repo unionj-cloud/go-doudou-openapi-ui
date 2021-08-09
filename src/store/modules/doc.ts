@@ -4,11 +4,13 @@ import { OpenAPIV3 } from 'openapi-types'
 import axios, { AxiosResponse } from 'axios'
 
 export interface IDocState {
+  docUrl: string
   document: OpenAPIV3.Document
 }
 
 @Module({ dynamic: true, store, name: 'doc' })
 class Doc extends VuexModule implements IDocState {
+  public docUrl = ''
   public document: OpenAPIV3.Document<{}> = {
     openapi: '',
     info: {
@@ -27,8 +29,12 @@ class Doc extends VuexModule implements IDocState {
 
   @Mutation
   private SET_DOCUMENT(document: OpenAPIV3.Document) {
-    console.log(document)
     this.document = document
+  }
+
+  @Mutation
+  private SET_DOCURL(docUrl: string) {
+    this.docUrl = docUrl
   }
 
   @Action
@@ -52,8 +58,10 @@ class Doc extends VuexModule implements IDocState {
         }
       })
       this.SET_DOCUMENT(resp.data)
+      this.SET_DOCURL(docUrl)
     } else if ((window as any).doc) {
       this.SET_DOCUMENT((window as any).doc)
+      this.SET_DOCURL((window as any).docUrl)
     }
   }
 }

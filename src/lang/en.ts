@@ -195,6 +195,7 @@ export default {
     version: 'Version',
     description: 'Description',
     total: 'Api Total',
+    stat: 'Api Number Stats',
     column: {
       module: 'Module',
       summary: 'Summary',
