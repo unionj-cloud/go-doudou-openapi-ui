@@ -61,11 +61,6 @@ export default class extends mixins(ResizeMixin) {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)'
       },
-      legend: {
-        left: 'center',
-        bottom: '10',
-        data: this.legends
-      },
       series: [
         {
           name: this.$t('home.stat'),

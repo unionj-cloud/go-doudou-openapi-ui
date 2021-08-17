@@ -2,7 +2,8 @@ import { OpenAPIV3 } from 'openapi-types'
 import { RouteConfig } from 'vue-router'
 import Doc from '@/views/doc/index.vue'
 import Layout from '@/layout/index.vue'
-import _, { now } from 'lodash'
+import _ from 'lodash'
+import { debug } from 'node:console'
 
 export function endpoint2Key(endpoint: string): string {
   return endpoint.replace(/[{}]/ig, '_').replace(/[^a-zA-Z0-9_]/ig, '')
@@ -12,7 +13,7 @@ export function endpoint2ModuleName(endpoint: string): string {
   return endpoint.split('/')[1]
 }
 
-function getFirstPart(endpoint:string) {
+function getFirstPart(endpoint: string) {
   return `${endpoint2ModuleName(endpoint)}${(Date.now() + '').substring(8) + (+Math.random().toFixed(6)) * 1000000}`
 }
 
@@ -35,7 +36,10 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
           endpoint,
-          i18n: false
+          i18n: false,
+          summary,
+          method,
+          description: pathItem.get.description
         }
       })
     }
@@ -54,7 +58,10 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
           endpoint,
-          i18n: false
+          i18n: false,
+          summary,
+          method,
+          description: pathItem.post.description
         }
       })
     }
@@ -73,7 +80,10 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
           endpoint,
-          i18n: false
+          i18n: false,
+          summary,
+          method,
+          description: pathItem.put.description
         }
       })
     }
@@ -92,7 +102,10 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
           title: summary || `${method.toUpperCase()} ${endpoint}`,
           tag,
           endpoint,
-          i18n: false
+          i18n: false,
+          summary,
+          method,
+          description: pathItem.delete.description
         }
       })
     }
@@ -100,7 +113,7 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
   const groupBy = _.groupBy(routes, 'meta.tag')
   const result: RouteConfig[] = []
   Object.keys(groupBy).forEach(key => {
-    const routes = groupBy[key]
+    const routes = _.sortBy(groupBy[key], ['meta.endpoint'])
     const { endpoint } = routes[0].meta
     const firstPart = getFirstPart(endpoint)
     const moduleName = _.capitalize(key)
@@ -118,7 +131,7 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
     }
     result.push(father)
   })
-  return _.sortBy(result, [function(o) { return o.path }])
+  return _.sortBy(result, ['meta.title'])
 }
 
 export interface HomeTable {
@@ -130,78 +143,21 @@ export interface HomeTable {
   route: string
 }
 
-export function paths2HomeTable(paths: OpenAPIV3.PathsObject): HomeTable[] {
+export function routes2HomeTable(routes: RouteConfig[]): HomeTable[] {
   const table: HomeTable[] = []
-  Object.keys(paths).sort().forEach(endpoint => {
-    const pathItem = paths[endpoint]
-    const _tag = endpoint2ModuleName(endpoint)
-    const firstPart = getFirstPart(endpoint)
-    if (pathItem?.get) {
-      const method = 'get'
-      const summary = pathItem.get.summary || ''
-      let tag = _tag
-      if (pathItem.get.tags?.length) {
-        tag = pathItem.get.tags[0]
-      }
+  routes.forEach((route: RouteConfig) => {
+    route.children?.forEach(subRoute => {
       table.push({
-        module: tag,
-        summary,
-        path: endpoint,
-        method,
-        description: pathItem.get.description || '',
-        route: `/${firstPart}/${encodeURIComponent(endpoint)}/${method}`
+        module: _.capitalize(subRoute.meta.tag),
+        summary: subRoute.meta.summary,
+        path: subRoute.meta.endpoint,
+        method: subRoute.meta.method,
+        description: subRoute.meta.description || '',
+        route: `${route.path}/${subRoute.path}`
       })
-    }
-    if (pathItem?.post) {
-      const method = 'post'
-      const summary = pathItem.post.summary || ''
-      let tag = _tag
-      if (pathItem.post.tags?.length) {
-        tag = pathItem.post.tags[0]
-      }
-      table.push({
-        module: tag,
-        summary,
-        path: endpoint,
-        method,
-        description: pathItem.post.description || '',
-        route: `/${firstPart}/${encodeURIComponent(endpoint)}/${method}`
-      })
-    }
-    if (pathItem?.put) {
-      const method = 'put'
-      const summary = pathItem.put.summary || ''
-      let tag = _tag
-      if (pathItem.put.tags?.length) {
-        tag = pathItem.put.tags[0]
-      }
-      table.push({
-        module: tag,
-        summary,
-        path: endpoint,
-        method,
-        description: pathItem.put.description || '',
-        route: `/${firstPart}/${encodeURIComponent(endpoint)}/${method}`
-      })
-    }
-    if (pathItem?.delete) {
-      const method = 'delete'
-      const summary = pathItem.delete.summary || ''
-      let tag = _tag
-      if (pathItem.delete.tags?.length) {
-        tag = pathItem.delete.tags[0]
-      }
-      table.push({
-        module: tag,
-        summary,
-        path: endpoint,
-        method,
-        description: pathItem.delete.description || '',
-        route: `/${firstPart}/${encodeURIComponent(endpoint)}/${method}`
-      })
-    }
+    })
   })
-  return _.sortBy(table, [function(o) { return o.path }])
+  return _.sortBy(table, ['module', 'path'])
 }
 
 export function tagType(method: string): string {

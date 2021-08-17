@@ -67,7 +67,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { DocModule } from '@/store/modules/doc'
-import { HomeTable, paths2HomeTable, tagType } from '@/utils/doc'
+import { PermissionModule } from '@/store/modules/permission'
+import { HomeTable, routes2HomeTable, tagType } from '@/utils/doc'
 import PieChart, { Item } from './components/PieChart.vue'
 import _ from 'lodash'
 
@@ -93,7 +94,7 @@ export default class extends Vue {
   }
 
   get table() {
-    return paths2HomeTable(DocModule.document.paths)
+    return routes2HomeTable(PermissionModule.dynamicRoutes)
   }
 
   get total() {
