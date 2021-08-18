@@ -14,7 +14,7 @@ export function endpoint2ModuleName(endpoint: string): string {
 }
 
 function getFirstPart(endpoint: string) {
-  return `${endpoint2ModuleName(endpoint)}${(Date.now() + '').substring(8) + (+Math.random().toFixed(6)) * 1000000}`
+  return endpoint2ModuleName(endpoint)
 }
 
 export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
@@ -24,10 +24,7 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
     if (pathItem?.get) {
       const method = 'get'
       const summary = pathItem.get.summary
-      let tag = endpoint2ModuleName(endpoint)
-      if (pathItem.get.tags?.length) {
-        tag = pathItem.get.tags[0]
-      }
+      const tag = endpoint2ModuleName(endpoint)
       routes.push({
         path: `${encodeURIComponent(endpoint)}/${method}`,
         name: `${endpoint2Key(endpoint)}:${method}`,
@@ -46,10 +43,7 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
     if (pathItem?.post) {
       const method = 'post'
       const summary = pathItem.post.summary
-      let tag = endpoint2ModuleName(endpoint)
-      if (pathItem.post.tags?.length) {
-        tag = pathItem.post.tags[0]
-      }
+      const tag = endpoint2ModuleName(endpoint)
       routes.push({
         path: `${encodeURIComponent(endpoint)}/${method}`,
         name: `${endpoint2Key(endpoint)}:${method}`,
@@ -68,10 +62,7 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
     if (pathItem?.put) {
       const method = 'put'
       const summary = pathItem.put.summary
-      let tag = endpoint2ModuleName(endpoint)
-      if (pathItem.put.tags?.length) {
-        tag = pathItem.put.tags[0]
-      }
+      const tag = endpoint2ModuleName(endpoint)
       routes.push({
         path: `${encodeURIComponent(endpoint)}/${method}`,
         name: `${endpoint2Key(endpoint)}:${method}`,
@@ -90,10 +81,7 @@ export const paths2Route = (paths: OpenAPIV3.PathsObject): RouteConfig[] => {
     if (pathItem?.delete) {
       const method = 'delete'
       const summary = pathItem.delete.summary
-      let tag = endpoint2ModuleName(endpoint)
-      if (pathItem.delete.tags?.length) {
-        tag = pathItem.delete.tags[0]
-      }
+      const tag = endpoint2ModuleName(endpoint)
       routes.push({
         path: `${encodeURIComponent(endpoint)}/${method}`,
         name: `${endpoint2Key(endpoint)}:${method}`,
