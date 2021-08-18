@@ -3,7 +3,6 @@ import { RouteConfig } from 'vue-router'
 import Doc from '@/views/doc/index.vue'
 import Layout from '@/layout/index.vue'
 import _ from 'lodash'
-import { debug } from 'node:console'
 
 export function endpoint2Key(endpoint: string): string {
   return endpoint.replace(/[{}]/ig, '_').replace(/[^a-zA-Z0-9_]/ig, '')
