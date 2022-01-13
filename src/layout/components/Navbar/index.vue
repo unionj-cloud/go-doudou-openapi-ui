@@ -15,7 +15,7 @@
         <header-search class="right-menu-item" />
         <lang-select class="right-menu-item hover-effect" />
         <div class="right-menu-item hover-effect">
-          <a target="_blank" href="https://github.com/unionj-cloud/go-doudou"><svg-icon name="github" width="40" height="40" /></a>
+          <a target="_blank" href="https://github.com/unionj-cloud/go-doudou-openapi-ui"><svg-icon name="github" width="40" height="40" /></a>
         </div>
       </template>
     </div>
