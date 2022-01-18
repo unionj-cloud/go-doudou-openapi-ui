@@ -14,7 +14,7 @@ yarn install && yarn serve
 
 Add `?docUrl=${OAS3_SPEC_LINK}` to `http://localhost:9527/#/index` and click `enter`, online documentation will display.  
 
-NOTE: `${OAS3_SPEC_LINK}` must support cors visit.
+NOTE: `${OAS3_SPEC_LINK}` must support cors visit, for example: `https://petstore3.swagger.io/api/v3/openapi.json`
 
 ## Screenshot
 ![screenshot](./screenshot.png)
