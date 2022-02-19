@@ -155,6 +155,7 @@ import { DocModule } from '@/store/modules/doc'
 import { OpenAPIV3 } from 'openapi-types'
 import { v4 as uuidv4 } from 'uuid'
 import { tagType } from '@/utils/doc'
+import { debug } from 'console'
 
 interface DocParam {
   name: string
@@ -228,7 +229,11 @@ function schema2DocType(schema : OpenAPIV3.SchemaObject):string {
   return result
 }
 
-function schema2Table(schema : OpenAPIV3.SchemaObject):DocBody[] {
+interface refCounter {
+  [key: string]: number
+}
+
+function schema2Table(schema : OpenAPIV3.SchemaObject, rc: refCounter):DocBody[] {
   const requiredProps: string[] = schema.required || []
   if ((schema as OpenAPIV3.SchemaObject).type === 'array') {
     let items = (schema as OpenAPIV3.ArraySchemaObject).items
@@ -236,8 +241,15 @@ function schema2Table(schema : OpenAPIV3.SchemaObject):DocBody[] {
     if (ref) {
       const key = ref.substring(ref.lastIndexOf('/') + 1)
       items = DocModule.document.components?.schemas?.[key] || {}
+      if (!Object.prototype.hasOwnProperty.call(rc, key)) {
+        rc[key] = 0
+      }
+      rc[key]++
+      if (rc[key] > 2) {
+        return []
+      }
     }
-    return schema2Table(items as OpenAPIV3.SchemaObject)
+    return schema2Table(items as OpenAPIV3.SchemaObject, rc)
   } else if ((schema as OpenAPIV3.SchemaObject).properties) {
     return Object.keys(schema.properties || {}).map(key => {
       let propSchema = schema.properties?.[key]
@@ -254,7 +266,7 @@ function schema2Table(schema : OpenAPIV3.SchemaObject):DocBody[] {
         description: (propSchema as OpenAPIV3.SchemaObject).description || '',
         default: (propSchema as OpenAPIV3.SchemaObject).default || '',
         example: (propSchema as OpenAPIV3.SchemaObject).example || '',
-        children: schema2Table(propSchema as OpenAPIV3.SchemaObject)
+        children: schema2Table(propSchema as OpenAPIV3.SchemaObject, rc)
       }
       return row
     })
@@ -292,7 +304,7 @@ function responseObject2DocResp(resp: OpenAPIV3.ReferenceObject | OpenAPIV3.Resp
       description: (schema as OpenAPIV3.SchemaObject).description || '',
       default: (schema as OpenAPIV3.SchemaObject).default || '',
       example: (schema as OpenAPIV3.SchemaObject).example || '',
-      children: schema2Table(schema as OpenAPIV3.SchemaObject)
+      children: schema2Table(schema as OpenAPIV3.SchemaObject, {})
     }]
   }
   return result
@@ -358,7 +370,7 @@ export default class extends Vue {
         description: (schema as OpenAPIV3.SchemaObject).description || '',
         default: (schema as OpenAPIV3.SchemaObject).default || '',
         example: (schema as OpenAPIV3.SchemaObject).example || '',
-        children: schema2Table(schema as OpenAPIV3.SchemaObject)
+        children: schema2Table(schema as OpenAPIV3.SchemaObject, {})
       }]
     }
     const responses: OpenAPIV3.ResponsesObject | undefined = this.pathItem.responses
