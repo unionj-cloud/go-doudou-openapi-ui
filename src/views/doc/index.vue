@@ -8,7 +8,7 @@
         <div>
           <el-row class="doc-row">
             <el-col :span="4">{{ $t('doc.description') }}: </el-col>
-            <el-col :span="20">{{this.pathItem.description}}</el-col>
+            <el-col :span="20" v-html="this.pathItem.description" style="white-space: pre-line"></el-col>
           </el-row>
           <el-row class="doc-row">
             <el-col :span="4">{{ $t('doc.path') }}: </el-col>
@@ -51,6 +51,9 @@
             <el-table-column
               prop="description"
               :label="$t('doc.column.description')">
+              <template slot-scope="scope">
+                <div v-html="scope.row.description" style="white-space: pre-line"></div>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -94,6 +97,9 @@
             <el-table-column
               prop="description"
               :label="$t('doc.column.description')">
+              <template slot-scope="scope">
+                <div v-html="scope.row.description" style="white-space: pre-line"></div>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -139,6 +145,9 @@
                 <el-table-column
                   prop="description"
                   :label="$t('doc.column.description')">
+                  <template slot-scope="scope">
+                    <div v-html="scope.row.description" style="white-space: pre-line"></div>
+                  </template>
                 </el-table-column>
               </el-table>
             </div>
@@ -155,7 +164,6 @@ import { DocModule } from '@/store/modules/doc'
 import { OpenAPIV3 } from 'openapi-types'
 import { v4 as uuidv4 } from 'uuid'
 import { tagType } from '@/utils/doc'
-import { debug } from 'console'
 
 interface DocParam {
   name: string
@@ -401,7 +409,6 @@ export default class extends Vue {
     margin-top: 0px;
   }
   .doc-row {
-    height: 40px;
     line-height: 40px;
   }
   .doc-table{
