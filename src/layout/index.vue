@@ -16,7 +16,7 @@
     <div
       :class="{hasTagsView: showTagsView}"
       class="main-container"
-       :style="{marginLeft: vNum+'px'}"
+       :style="mainContainerStyle"
     >
       <div :class="{'fixed-header': fixedHeader}" :style="{width: 'calc(100% - vNum)'+'px'}">
         <navbar />
@@ -80,6 +80,13 @@ export default class extends mixins(ResizeMixin) {
 
   get fixedHeader() {
     return settings.fixedHeader
+  }
+
+  get mainContainerStyle() {
+    if (this.sidebar.opened) {
+      return { marginLeft: this.vNum + 'px' }
+    }
+    return {}
   }
 
   private handleClickOutside() {
