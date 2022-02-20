@@ -8,7 +8,7 @@
         <div>
           <el-row class="doc-row">
             <el-col :span="4">{{ $t('doc.description') }}: </el-col>
-            <el-col :span="20">{{this.pathItem.description}}</el-col>
+            <el-col :span="20" v-html="this.pathItem.description" style="white-space: pre-line"></el-col>
           </el-row>
           <el-row class="doc-row">
             <el-col :span="4">{{ $t('doc.path') }}: </el-col>
@@ -51,6 +51,9 @@
             <el-table-column
               prop="description"
               :label="$t('doc.column.description')">
+              <template slot-scope="scope">
+                <div v-html="scope.row.description" style="white-space: pre-line"></div>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -94,6 +97,9 @@
             <el-table-column
               prop="description"
               :label="$t('doc.column.description')">
+              <template slot-scope="scope">
+                <div v-html="scope.row.description" style="white-space: pre-line"></div>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -139,6 +145,9 @@
                 <el-table-column
                   prop="description"
                   :label="$t('doc.column.description')">
+                  <template slot-scope="scope">
+                    <div v-html="scope.row.description" style="white-space: pre-line"></div>
+                  </template>
                 </el-table-column>
               </el-table>
             </div>
@@ -155,7 +164,6 @@ import { DocModule } from '@/store/modules/doc'
 import { OpenAPIV3 } from 'openapi-types'
 import { v4 as uuidv4 } from 'uuid'
 import { tagType } from '@/utils/doc'
-import { debug } from 'console'
 
 interface DocParam {
   name: string
@@ -233,6 +241,16 @@ interface refCounter {
   [key: string]: number
 }
 
+function getItemsDescription(schema: OpenAPIV3.ArraySchemaObject): string {
+  let items = schema.items
+  const ref = (items as OpenAPIV3.ReferenceObject).$ref
+  if (ref) {
+    const key = ref.substring(ref.lastIndexOf('/') + 1)
+    items = DocModule.document.components?.schemas?.[key] || {}
+  }
+  return (items as OpenAPIV3.SchemaObject).description || ''
+}
+
 function schema2Table(schema : OpenAPIV3.SchemaObject, rc: refCounter):DocBody[] {
   const requiredProps: string[] = schema.required || []
   if ((schema as OpenAPIV3.SchemaObject).type === 'array') {
@@ -258,12 +276,16 @@ function schema2Table(schema : OpenAPIV3.SchemaObject, rc: refCounter):DocBody[]
         const key = ref.substring(ref.lastIndexOf('/') + 1)
         propSchema = DocModule.document.components?.schemas?.[key]
       }
+      let itemsDescription = ''
+      if ((propSchema as OpenAPIV3.SchemaObject).type === 'array') {
+        itemsDescription = getItemsDescription(propSchema as OpenAPIV3.ArraySchemaObject)
+      }
       const row: DocBody = {
         id: uuidv4(),
         name: key,
         type: schema2DocType(propSchema as OpenAPIV3.SchemaObject),
         required: requiredProps.indexOf(key) >= 0 ? 'true' : 'false',
-        description: (propSchema as OpenAPIV3.SchemaObject).description || '',
+        description: ((propSchema as OpenAPIV3.SchemaObject).description || '') + '<br />' + itemsDescription,
         default: (propSchema as OpenAPIV3.SchemaObject).default || '',
         example: (propSchema as OpenAPIV3.SchemaObject).example || '',
         children: schema2Table(propSchema as OpenAPIV3.SchemaObject, rc)
@@ -366,7 +388,7 @@ export default class extends Vue {
         id: uuidv4(),
         name: 'root',
         type: schema2DocType(schema as OpenAPIV3.SchemaObject),
-        required: 'true',
+        required: (reqBody as OpenAPIV3.RequestBodyObject).required ? 'true' : 'false',
         description: (schema as OpenAPIV3.SchemaObject).description || '',
         default: (schema as OpenAPIV3.SchemaObject).default || '',
         example: (schema as OpenAPIV3.SchemaObject).example || '',
@@ -401,7 +423,6 @@ export default class extends Vue {
     margin-top: 0px;
   }
   .doc-row {
-    height: 40px;
     line-height: 40px;
   }
   .doc-table{

@@ -18,7 +18,7 @@
               </el-row>
               <el-row class="home-row">
                 <el-col :span="4">{{ $t('home.description') }}: </el-col>
-                <el-col :span="20">{{description}}</el-col>
+                <el-col :span="20" v-html="description" style="white-space: pre-line"></el-col>
               </el-row>
             </el-col>
             <el-col :span="8">
@@ -57,6 +57,9 @@
             <el-table-column
               prop="description"
               :label="$t('home.column.description')">
+              <template slot-scope="scope">
+                <div v-html="scope.row.description" style="white-space: pre-line"></div>
+              </template>
             </el-table-column>
           </el-table>
       </div>
@@ -134,7 +137,6 @@ export default class extends Vue {
   padding: 40px;
 }
 .home-row {
-  height: 40px;
   line-height: 40px;
 }
 .home-info {
