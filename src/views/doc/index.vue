@@ -241,6 +241,16 @@ interface refCounter {
   [key: string]: number
 }
 
+function getItemsDescription(schema: OpenAPIV3.ArraySchemaObject): string {
+  let items = schema.items
+  const ref = (items as OpenAPIV3.ReferenceObject).$ref
+  if (ref) {
+    const key = ref.substring(ref.lastIndexOf('/') + 1)
+    items = DocModule.document.components?.schemas?.[key] || {}
+  }
+  return (items as OpenAPIV3.SchemaObject).description || ''
+}
+
 function schema2Table(schema : OpenAPIV3.SchemaObject, rc: refCounter):DocBody[] {
   const requiredProps: string[] = schema.required || []
   if ((schema as OpenAPIV3.SchemaObject).type === 'array') {
@@ -266,12 +276,16 @@ function schema2Table(schema : OpenAPIV3.SchemaObject, rc: refCounter):DocBody[]
         const key = ref.substring(ref.lastIndexOf('/') + 1)
         propSchema = DocModule.document.components?.schemas?.[key]
       }
+      let itemsDescription = ''
+      if ((propSchema as OpenAPIV3.SchemaObject).type === 'array') {
+        itemsDescription = getItemsDescription(propSchema as OpenAPIV3.ArraySchemaObject)
+      }
       const row: DocBody = {
         id: uuidv4(),
         name: key,
         type: schema2DocType(propSchema as OpenAPIV3.SchemaObject),
         required: requiredProps.indexOf(key) >= 0 ? 'true' : 'false',
-        description: (propSchema as OpenAPIV3.SchemaObject).description || '',
+        description: ((propSchema as OpenAPIV3.SchemaObject).description || '') + '<br />' + itemsDescription,
         default: (propSchema as OpenAPIV3.SchemaObject).default || '',
         example: (propSchema as OpenAPIV3.SchemaObject).example || '',
         children: schema2Table(propSchema as OpenAPIV3.SchemaObject, rc)
@@ -374,7 +388,7 @@ export default class extends Vue {
         id: uuidv4(),
         name: 'root',
         type: schema2DocType(schema as OpenAPIV3.SchemaObject),
-        required: 'true',
+        required: (reqBody as OpenAPIV3.RequestBodyObject).required ? 'true' : 'false',
         description: (schema as OpenAPIV3.SchemaObject).description || '',
         default: (schema as OpenAPIV3.SchemaObject).default || '',
         example: (schema as OpenAPIV3.SchemaObject).example || '',
