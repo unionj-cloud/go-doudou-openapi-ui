@@ -12,6 +12,7 @@
     />
     <div class="right-menu">
       <template v-if="device!=='mobile'">
+        <doc-select class="right-menu-item hover-effect" />
         <header-search class="right-menu-item" />
         <lang-select class="right-menu-item hover-effect" />
         <div class="right-menu-item hover-effect">
@@ -29,6 +30,7 @@ import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
 import HeaderSearch from '@/components/HeaderSearch/index.vue'
 import LangSelect from '@/components/LangSelect/index.vue'
+import DocSelect from '@/components/DocSelect/index.vue'
 
 @Component({
   name: 'Navbar',
@@ -36,7 +38,8 @@ import LangSelect from '@/components/LangSelect/index.vue'
     Breadcrumb,
     Hamburger,
     HeaderSearch,
-    LangSelect
+    LangSelect,
+    DocSelect
   }
 })
 export default class extends Vue {

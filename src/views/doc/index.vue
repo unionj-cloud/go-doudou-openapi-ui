@@ -340,7 +340,7 @@ export default class extends Vue {
   private tagType = tagType
   private path = ''
   private method = ''
-  private pathItem: OpenAPIV3.OperationObject = {}
+  private pathItem: OpenAPIV3.OperationObject = {} as any
   private params: DocParam[] = []
   private reqBody: DocBody[] = []
   private respBody: DocResp[] = []
