@@ -1,22 +1,12 @@
 <template>
-  <el-dropdown
-    trigger="click"
-    class="international"
-    @command="handleSetDoc"
-  >
-    <div style="font-size: 14px;">
-      模块
-    </div>
-    <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item
-      v-for="(doc, i) in docs"
-      :key="i"
-      :command="i"
-      >
-        {{ doc.info.title }}
-      </el-dropdown-item>
-    </el-dropdown-menu>
-  </el-dropdown>
+  <el-select v-model="value" placeholder="请选择模块" @change="handleSetDoc">
+    <el-option
+    v-for="doc in docs"
+      :key="doc.value"
+      :label="doc.label"
+      :value="doc.value">
+    </el-option>
+  </el-select>
 </template>
 
 <script lang="ts">
@@ -25,6 +15,8 @@ import { Component, Vue } from 'vue-property-decorator'
   name: 'DocSelect'
 })
 export default class extends Vue {
+  value = ''
+
   get docs() {
     return (window as any).docs
   }
@@ -33,9 +25,8 @@ export default class extends Vue {
     return (window as any).docUrls
   }
 
-  public handleSetDoc(value: number) {
-    (window as any).doc = this.docs[value]
-    (window as any).docUrl = this.docUrls[value]
+  public handleSetDoc(value: string) {
+    window.location.href = value
   }
 }
 </script>

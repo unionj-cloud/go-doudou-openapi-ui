@@ -12,7 +12,7 @@
           </el-row>
           <el-row class="doc-row">
             <el-col :span="4">{{ $t('doc.path') }}: </el-col>
-            <el-col :span="20"><el-tag :type="tagType(method)">{{this.method.toUpperCase()}}</el-tag> {{this.path}}</el-col>
+            <el-col :span="20"><el-tag :type="tagType(method)">{{ this.method.toUpperCase() }}</el-tag> {{ this.path }}</el-col>
           </el-row>
         </div>
       </el-card>
@@ -33,8 +33,10 @@
               :label="$t('doc.column.in')">
             </el-table-column>
             <el-table-column
-              prop="type"
               :label="$t('doc.column.type')">
+              <template slot-scope="scope">
+                <pre>{{ scope.row.type }}</pre>
+              </template>
             </el-table-column>
             <el-table-column
               prop="required"
@@ -54,108 +56,74 @@
               <template slot-scope="scope">
                 <div v-html="scope.row.description" style="white-space: pre-line"></div>
               </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-card>
-      <el-card class="doc-card" v-if="hasReqBody">
-        <div slot="header" class="clearfix">
-          <span>{{ $t('doc.reqBody') }}</span>
-        </div>
-        <el-row class="doc-row">
-          <el-col :span="4"> Content-Type: </el-col>
-          <el-col :span="20"> {{this.reqContentTypes.join(', ')}}</el-col>
-        </el-row>
-        <div class="doc-table">
-          <el-table
-            :data="reqBody"
-            style="width: 100%"
-            row-key="id"
-            border
-            default-expand-all
-            :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-            <el-table-column
-              prop="name"
-              :label="$t('doc.column.name')">
-            </el-table-column>
-            <el-table-column
-              prop="type"
-              :label="$t('doc.column.type')">
-            </el-table-column>
-            <el-table-column
-              prop="required"
-              :label="$t('doc.column.required')">
-            </el-table-column>
-            <el-table-column
-              prop="default"
-              :label="$t('doc.column.default')">
-            </el-table-column>
-            <el-table-column
-              prop="example"
-              :label="$t('doc.column.example')">
-            </el-table-column>
-            <el-table-column
-              prop="description"
-              :label="$t('doc.column.description')">
-              <template slot-scope="scope">
+</el-table-column>
+</el-table>
+</div>
+</el-card>
+<el-card class="doc-card" v-if="hasReqBody">
+  <div slot="header" class="clearfix">
+    <span>{{ $t('doc.reqBody') }}</span>
+  </div>
+  <el-row class="doc-row">
+    <el-col :span="4"> Content-Type: </el-col>
+    <el-col :span="20"> {{ this.reqContentTypes.join(', ') }}</el-col>
+  </el-row>
+  <div class="doc-table">
+    <el-table :data="reqBody" style="width: 100%" row-key="id" border default-expand-all
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+      <el-table-column prop="name" :label="$t('doc.column.name')">
+      </el-table-column>
+      <el-table-column prop="type" :label="$t('doc.column.type')">
+      </el-table-column>
+      <el-table-column prop="required" :label="$t('doc.column.required')">
+      </el-table-column>
+      <el-table-column prop="default" :label="$t('doc.column.default')">
+      </el-table-column>
+      <el-table-column prop="example" :label="$t('doc.column.example')">
+      </el-table-column>
+      <el-table-column prop="description" :label="$t('doc.column.description')">
+        <template slot-scope="scope">
                 <div v-html="scope.row.description" style="white-space: pre-line"></div>
               </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-card>
-      <el-card class="doc-card">
-        <div slot="header" class="clearfix">
-          <span>{{ $t('doc.respBody') }}</span>
-        </div>
-        <el-tabs v-model="activeTab" type="card">
-          <el-tab-pane v-for="(item, index) in respBody" :key="index" :label="item.code" :name="item.code">
-            <el-row class="doc-row">
-              <el-col :span="4"> Content-Type: </el-col>
-              <el-col :span="20"> {{item.contentTypes.join(', ')}}</el-col>
-            </el-row>
-            <div class="doc-table">
-              <el-table
-                :data="item.body"
-                style="width: 100%"
-                row-key="id"
-                border
-                default-expand-all
-                :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-                <el-table-column
-                  prop="name"
-                  :label="$t('doc.column.name')">
-                </el-table-column>
-                <el-table-column
-                  prop="type"
-                  :label="$t('doc.column.type')">
-                </el-table-column>
-                <el-table-column
-                  prop="required"
-                  :label="$t('doc.column.required')">
-                </el-table-column>
-                <el-table-column
-                  prop="default"
-                  :label="$t('doc.column.default')">
-                </el-table-column>
-                <el-table-column
-                  prop="example"
-                  :label="$t('doc.column.example')">
-                </el-table-column>
-                <el-table-column
-                  prop="description"
-                  :label="$t('doc.column.description')">
-                  <template slot-scope="scope">
+      </el-table-column>
+    </el-table>
+  </div>
+</el-card>
+<el-card class="doc-card">
+  <div slot="header" class="clearfix">
+    <span>{{ $t('doc.respBody') }}</span>
+  </div>
+  <el-tabs v-model="activeTab" type="card">
+    <el-tab-pane v-for="(item, index) in respBody" :key="index" :label="item.code" :name="item.code">
+      <el-row class="doc-row">
+        <el-col :span="4"> Content-Type: </el-col>
+        <el-col :span="20"> {{ item.contentTypes.join(', ') }}</el-col>
+      </el-row>
+      <div class="doc-table">
+        <el-table :data="item.body" style="width: 100%" row-key="id" border default-expand-all
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+          <el-table-column prop="name" :label="$t('doc.column.name')">
+          </el-table-column>
+          <el-table-column prop="type" :label="$t('doc.column.type')">
+          </el-table-column>
+          <el-table-column prop="required" :label="$t('doc.column.required')">
+          </el-table-column>
+          <el-table-column prop="default" :label="$t('doc.column.default')">
+          </el-table-column>
+          <el-table-column prop="example" :label="$t('doc.column.example')">
+          </el-table-column>
+          <el-table-column prop="description" :label="$t('doc.column.description')">
+            <template slot-scope="scope">
                     <div v-html="scope.row.description" style="white-space: pre-line"></div>
                   </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </el-card>
-    </el-main>
-  </el-container>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-tab-pane>
+  </el-tabs>
+</el-card>
+</el-main>
+</el-container>
 </template>
 
 <script lang="ts">
@@ -192,11 +160,11 @@ interface DocResp {
   body: DocBody[]
 }
 
-function getTypeByRef():string {
+function getTypeByRef(): string {
   return 'object'
 }
 
-function schema2DocType(schema : OpenAPIV3.SchemaObject):string {
+function schema2DocType(schema: OpenAPIV3.SchemaObject): string {
   const type = schema.type
   if (!type) {
     return getTypeByRef()
@@ -251,7 +219,7 @@ function getItemsDescription(schema: OpenAPIV3.ArraySchemaObject): string {
   return (items as OpenAPIV3.SchemaObject).description || ''
 }
 
-function schema2Table(schema : OpenAPIV3.SchemaObject, rc: refCounter):DocBody[] {
+function schema2Table(schema: OpenAPIV3.SchemaObject, rc: refCounter): DocBody[] {
   const requiredProps: string[] = schema.required || []
   if ((schema as OpenAPIV3.SchemaObject).type === 'array') {
     let items = (schema as OpenAPIV3.ArraySchemaObject).items
@@ -297,8 +265,8 @@ function schema2Table(schema : OpenAPIV3.SchemaObject, rc: refCounter):DocBody[]
   }
 }
 
-function responseObject2DocResp(resp: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject, code: string):DocResp {
-  const result:DocResp = {
+function responseObject2DocResp(resp: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject, code: string): DocResp {
+  const result: DocResp = {
     code,
     contentTypes: [],
     body: []
@@ -355,15 +323,21 @@ export default class extends Vue {
     const parameters = ([...commonParams, ...(this.pathItem.parameters || [])]) as OpenAPIV3.ParameterObject[]
     if (parameters.length) {
       this.params = parameters.map(param => {
-        const type = schema2DocType((param.schema as OpenAPIV3.SchemaObject))
         const docParam: DocParam = {
+          type: '',
           name: param.name,
           in: param.in,
-          type,
           required: (param.required || false) + '',
           example: param.example || '',
           description: param.description || '',
           default: (param.schema as OpenAPIV3.SchemaObject).default || ''
+        }
+        const ref = (param.schema as OpenAPIV3.ReferenceObject).$ref
+        if (ref) {
+          const key = ref.substring(ref.lastIndexOf('/') + 1)
+          docParam.type = JSON.stringify((DocModule.document.components?.schemas?.[key] as OpenAPIV3.SchemaObject).properties, null, 4)
+        } else {
+          docParam.type = schema2DocType((param.schema as OpenAPIV3.SchemaObject))
         }
         return docParam
       })
@@ -419,13 +393,16 @@ export default class extends Vue {
   .doc-card {
     margin: 40px 0;
   }
+
   .doc-card:first-child {
     margin-top: 0px;
   }
+
   .doc-row {
     line-height: 40px;
   }
-  .doc-table{
+
+  .doc-table {
     margin: 20px 0px;
   }
 }

@@ -12,7 +12,7 @@
     />
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <doc-select class="right-menu-item hover-effect" />
+        <doc-select class="right-menu-item hover-effect" v-if="docs.length > 1" />
         <header-search class="right-menu-item" />
         <lang-select class="right-menu-item hover-effect" />
         <div class="right-menu-item hover-effect">
@@ -49,6 +49,10 @@ export default class extends Vue {
 
   get device() {
     return AppModule.device.toString()
+  }
+
+  get docs() {
+    return (window as any).docs
   }
 
   private toggleSideBar() {

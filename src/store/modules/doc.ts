@@ -29,7 +29,9 @@ class Doc extends VuexModule implements IDocState {
 
   @Mutation
   private SET_DOCUMENT(document: OpenAPIV3.Document) {
-    this.document = document
+    if (Object.keys(document).length) {
+      this.document = document
+    }
   }
 
   @Mutation
